@@ -1,13 +1,12 @@
 ﻿<!DOCTYPE html>
 <html manifest="offline.appcache">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<title>New project</title>
-	<!-- Note: running this exported project from disk may not work exactly like preview, since browsers block some features on the file:// protocol.  Once you've uploaded it to a server, it should work OK. -->
 	
 	<!-- Allow fullscreen mode on iOS devices. (These are Apple specific meta tags.) -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	<meta name="HandheldFriendly" content="true" />
@@ -25,14 +24,9 @@
 			-ms-touch-action: none;
 		}
 		canvas {
-			position: fixed;
 			-ms-touch-action: none;
 		}
     </style>
-
-    <!-- WinJS references -->
-    <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
-    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
 	
 
 </head> 
@@ -45,68 +39,57 @@
 	
 		<!-- The canvas the project will render to.  If you change its ID, don't forget to change the
 		ID the runtime looks for in the jQuery events above (ready() and cr_sizeCanvas()). -->
-		<canvas id="c2canvas" width="640" height="480" oncontextmenu="return false;" onselectstart="return false;">
-			The browser appears to have HTML5 disabled.  Try checking the compatibility settings.
+		<canvas id="c2canvas" width="640" height="480">
+			<!-- This text is displayed if the visitor's browser does not support HTML5.
+			You can change it, but it is a good idea to link to a description of a browser
+			and provide some links to download some popular HTML5-compatible browsers. -->
+			<h1>Your browser does not appear to support HTML5.  Try upgrading your browser to the latest version.  <a href="http://www.whatbrowser.org">What is a browser?</a>
+			<br/><br/><a href="http://www.microsoft.com/windows/internet-explorer/default.aspx">Microsoft Internet Explorer</a><br/>
+			<a href="http://www.mozilla.com/firefox/">Mozilla Firefox</a><br/>
+			<a href="http://www.google.com/chrome/">Google Chrome</a><br/>
+			<a href="http://www.apple.com/safari/download/">Apple Safari</a><br/>
+			<a href="http://www.google.com/chromeframe">Google Chrome Frame for Internet Explorer</a><br/></h1>
 		</canvas>
-	
+		
 	</div>
 	
-	<script src="jquery-2.0.0.min.js"></script>
+	<!-- Pages load faster with scripts at the bottom -->
 	
+	<!-- Construct 2 exported games require jQuery. -->
+	<script src="jquery-2.0.0.min.js"></script>
 
 
+	
+    <!-- The runtime script.  You can rename it, but don't forget to rename the reference here as well.
+    This file will have been minified and obfuscated if you enabled "Minify script" during export. -->
 	<script src="c2runtime.js"></script>
 
     <script>
-	(function () {
-		"use strict";
-		var app = WinJS.Application;
-
-		jQuery(window).resize(function () {
+		// Size the canvas to fill the browser viewport.
+		jQuery(window).resize(function() {
 			cr_sizeCanvas(jQuery(window).width(), jQuery(window).height());
 		});
-
-		// Start the Construct 2 project running on window load.
-		jQuery(document).ready(function () {
 		
-			// Indicate Windows 8 platform
-			window["c2isWindows8"] = true;
-			
+		// Start the Construct 2 project running on window load.
+		jQuery(document).ready(function ()
+		{			
 			// Create new runtime using the c2canvas
 			cr_createRuntime("c2canvas");
-			
-			cr_sizeCanvas(jQuery(window).width(), jQuery(window).height());
-
-			app.start();
 		});
 		
-		var activation = Windows.ApplicationModel.Activation;
-
-		app.onactivated = function (args) {
-			if (args.detail.kind === activation.ActivationKind.launch) {
-				if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated)
-				{
-					// TODO: This application has been newly launched.
-				}
-				else
-				{
-					// This application has been reactivated from suspension.
-					cr_setSuspended(false);
-				}
-				args.setPromise(WinJS.UI.processAll());
-			}
-		};
-
-		app.oncheckpoint = function (args) {
-			// This application is about to be suspended.
-			cr_setSuspended(true);
+		// Pause and resume on page becoming visible/invisible
+		function onVisibilityChanged() {
+			if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)
+				cr_setSuspended(true);
+			else
+				cr_setSuspended(false);
 		};
 		
-		Windows.UI.WebUI.WebUIApplication.addEventListener("resuming", function () {
-		    cr_setSuspended(false);
-		}, false);
-
-	})();
+		document.addEventListener("visibilitychange", onVisibilityChanged, false);
+		document.addEventListener("mozvisibilitychange", onVisibilityChanged, false);
+		document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
+		document.addEventListener("msvisibilitychange", onVisibilityChanged, false);
+		
     </script>
 </body> 
 </html> 
