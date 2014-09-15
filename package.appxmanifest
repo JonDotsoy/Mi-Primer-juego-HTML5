@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
+  <Identity Name="ff312ff3-adf1-4df8-9a7b-568279d8fa75" Version="1.0.0.0" />
+  <Properties>
+    <DisplayName>New project</DisplayName>
+    <Description>asd</Description>
+    <PublisherDisplayName>asda</PublisherDisplayName>
+    <Logo>app-storelogo.png</Logo>
+  </Properties>
+  <Prerequisites>
+    <OSMinVersion>6.2.0</OSMinVersion>
+    <OSMaxVersionTested>6.2.0</OSMaxVersionTested>
+  </Prerequisites>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" StartPage="index.html">
+      <VisualElements DisplayName="New project" Logo="app-logo.png" SmallLogo="app-smalllogo.png" Description="asd" ForegroundText="light" BackgroundColor="#464646">
+        <DefaultTile ShowName="allLogos" />
+        <SplashScreen Image="splashscreen.png" />
+      </VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+	
+  </Capabilities>
+</Package>

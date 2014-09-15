@@ -1,79 +1,112 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html manifest="offline.appcache">
+<head>
+    <meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>New project</title>
+	<!-- Note: running this exported project from disk may not work exactly like preview, since browsers block some features on the file:// protocol.  Once you've uploaded it to a server, it should work OK. -->
+	
+	<!-- Allow fullscreen mode on iOS devices. (These are Apple specific meta tags.) -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="HandheldFriendly" content="true" />
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Mi-primer-juego-html5 : ">
+    <!-- All margins and padding must be zero for the canvas to fill the screen. -->
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+		}
+		body {
+			background: #000;
+			color: #fff;
+			overflow: hidden;
+			-ms-touch-action: none;
+		}
+		canvas {
+			position: fixed;
+			-ms-touch-action: none;
+		}
+    </style>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <!-- WinJS references -->
+    <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
+    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
+	
 
-    <title>Mi-primer-juego-html5</title>
-  </head>
+</head> 
+ 
+<body> 
+	<div id="fb-root"></div>
+	
+	<!-- The canvas must be inside a div called c2canvasdiv -->
+	<div id="c2canvasdiv">
+	
+		<!-- The canvas the project will render to.  If you change its ID, don't forget to change the
+		ID the runtime looks for in the jQuery events above (ready() and cr_sizeCanvas()). -->
+		<canvas id="c2canvas" width="640" height="480" oncontextmenu="return false;" onselectstart="return false;">
+			The browser appears to have HTML5 disabled.  Try checking the compatibility settings.
+		</canvas>
+	
+	</div>
+	
+	<script src="jquery-2.0.0.min.js"></script>
+	
 
-  <body>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/alfa30/Mi-Primer-juego-HTML5">View on GitHub</a>
+	<script src="c2runtime.js"></script>
 
-          <h1 id="project_title">Mi-primer-juego-html5</h1>
-          <h2 id="project_tagline"></h2>
+    <script>
+	(function () {
+		"use strict";
+		var app = WinJS.Application;
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/alfa30/Mi-Primer-juego-HTML5/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/alfa30/Mi-Primer-juego-HTML5/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+		jQuery(window).resize(function () {
+			cr_sizeCanvas(jQuery(window).width(), jQuery(window).height());
+		});
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+		// Start the Construct 2 project running on window load.
+		jQuery(document).ready(function () {
+		
+			// Indicate Windows 8 platform
+			window["c2isWindows8"] = true;
+			
+			// Create new runtime using the c2canvas
+			cr_createRuntime("c2canvas");
+			
+			cr_sizeCanvas(jQuery(window).width(), jQuery(window).height());
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+			app.start();
+		});
+		
+		var activation = Windows.ApplicationModel.Activation;
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+		app.onactivated = function (args) {
+			if (args.detail.kind === activation.ActivationKind.launch) {
+				if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated)
+				{
+					// TODO: This application has been newly launched.
+				}
+				else
+				{
+					// This application has been reactivated from suspension.
+					cr_setSuspended(false);
+				}
+				args.setPromise(WinJS.UI.processAll());
+			}
+		};
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+		app.oncheckpoint = function (args) {
+			// This application is about to be suspended.
+			cr_setSuspended(true);
+		};
+		
+		Windows.UI.WebUI.WebUIApplication.addEventListener("resuming", function () {
+		    cr_setSuspended(false);
+		}, false);
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Mi-primer-juego-html5 maintained by <a href="https://github.com/alfa30">alfa30</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
-</html>
+	})();
+    </script>
+</body> 
+</html> 
